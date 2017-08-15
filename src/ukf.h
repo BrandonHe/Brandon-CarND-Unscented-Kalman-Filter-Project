@@ -102,6 +102,13 @@ public:
    * @param meas_package The measurement at k+1
    */
   void UpdateRadar(MeasurementPackage meas_package);
+
+  /**
+   * Update the state and the state covariance matrix using a measument Package
+   * @param meas_package The measurement at k+1
+   * @param meas_dimen The measurement dimension
+   */
+  void UpdateUKF(MeasurementPackage meas_package, int meas_dimen);
 };
 
 #endif /* UKF_H */
