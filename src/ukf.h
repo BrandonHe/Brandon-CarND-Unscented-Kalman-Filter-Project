@@ -1,7 +1,8 @@
-#ifndef UKF_H
-#define UKF_H
+#ifndef UKF_H_
+#define UKF_H_
 
 #include "measurement_package.h"
+#include "tools.h"
 #include "Eigen/Dense"
 #include <vector>
 #include <string>
@@ -64,8 +65,17 @@ public:
   ///* Augmented state dimension
   int n_aug_;
 
+  ///* Sigma points number
+  int n_sig_;
+
   ///* Sigma point spreading parameter
   double lambda_;
+
+  ///* The current NIS for radar
+  double NIS_radar_;
+
+  ///* The current NIS for laser
+  double NIS_laser_;
 
 
   /**
@@ -92,6 +102,14 @@ public:
   void Prediction(double delta_t);
 
   /**
+  * Update the state and the state covariance matrix using a measument Package
+  * @param meas_package The measurement at k+1
+  * @param Zsig The matrix for sigma points in measurement space
+  * @param n_z The measurement dimension
+  */
+  void UpdateUKF(MeasurementPackage meas_package, MatrixXd Zsig, int n_z);
+
+  /**
    * Updates the state and the state covariance matrix using a laser measurement
    * @param meas_package The measurement at k+1
    */
@@ -103,12 +121,6 @@ public:
    */
   void UpdateRadar(MeasurementPackage meas_package);
 
-  /**
-   * Update the state and the state covariance matrix using a measument Package
-   * @param meas_package The measurement at k+1
-   * @param meas_dimen The measurement dimension
-   */
-  void UpdateUKF(MeasurementPackage meas_package, int meas_dimen);
 };
 
-#endif /* UKF_H */
+#endif /* UKF_H_ */
