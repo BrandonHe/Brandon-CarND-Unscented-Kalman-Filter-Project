@@ -1,4 +1,3 @@
-
 #include "tools.h"
 #include "ukf.h"
 #include "Eigen/Dense"
@@ -152,12 +151,11 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
     weights_(i) = weight;
   }
 
-    time_us_ = meas_package.timestamp_;
-    is_initialized_ = true;
+  time_us_ = meas_package.timestamp_;
+  is_initialized_ = true;
 
-    //cout << "Done initialize!" << endl;
-
-    return;
+  //cout << "Done initialize!" << endl;
+  return;
   }
 
   /***************************
@@ -168,7 +166,6 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   // Convert to seconds
   dt /= 1000000.0;
   time_us_ = meas_package.timestamp_;
-
   Prediction(dt);
 
   /***************************
@@ -236,8 +233,6 @@ void UKF::Prediction(double delta_t) {
    * Augment sigma points
    ********************************************/
 
-
-
   // Create augmented mean vector
   VectorXd x_aug = VectorXd(n_aug_);
 
@@ -253,7 +248,6 @@ void UKF::Prediction(double delta_t) {
 
   x_aug.fill(0.0);
   x_aug.head(n_x_) = x_;
-
 
   P_aug.fill(0.0);
   P_aug.topLeftCorner(n_x_,n_x_) = P_;
@@ -355,7 +349,6 @@ void UKF::Prediction(double delta_t) {
 
     P_ = P_ + weights_(i) * x_diff * x_diff.transpose();
   }
-
 
   cout << "Predicted covariance matrix:" << endl;
   cout << "P_ =: " << endl << P_ << endl;
