@@ -29,16 +29,12 @@ UKF::UKF() {
   P_ = MatrixXd(5, 5);
 
   // Process noise standard deviation longitudinal acceleration in m/s^2
-  //std_a_ = 30;  // freeze
-  //std_a_ = 1.5;   // freeze at time step 49
-  //std_a_ = 4.8;   // not freeze, but failed to pass criteria
-  std_a_ = 0.15;
+  //std_a_ = 30;
+  std_a_ = 1.5;   // freeze at time step 49
 
   // Process noise standard deviation yaw acceleration in rad/s^2
   //std_yawdd_ = 30;
-  //std_yawdd_ = 0.57;  // feeze at time step 49
-  //std_yawdd_ = 1.1* M_PI; // not freeze, but failed to pass criteria
-  std_yawdd_ = 0.15;
+  std_yawdd_ = 0.57;  // feeze at time step 49
 
   // Laser measurement noise standard deviation position1 in m
   std_laspx_ = 0.15;
@@ -405,7 +401,7 @@ void UKF::UpdateUKF(MeasurementPackage meas_package, MatrixXd Zsig, int n_z) {
     R = R_lidar_;
   }
   S = S + R;
-  
+
   // Create matrix for cross correlation Tc
   MatrixXd Tc = MatrixXd(n_x_, n_z);
 
