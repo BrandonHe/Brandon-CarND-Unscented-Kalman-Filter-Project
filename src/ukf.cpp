@@ -29,10 +29,16 @@ UKF::UKF() {
   P_ = MatrixXd(5, 5);
 
   // Process noise standard deviation longitudinal acceleration in m/s^2
-  std_a_ = 30;
+  //std_a_ = 30;  // freeze
+  //std_a_ = 1.5;   // freeze at time step 49
+  //std_a_ = 4.8;   // not freeze, but failed to pass criteria
+  std_a_ = 0.15;
 
   // Process noise standard deviation yaw acceleration in rad/s^2
-  std_yawdd_ = 30;
+  //std_yawdd_ = 30;
+  //std_yawdd_ = 0.57;  // feeze at time step 49
+  //std_yawdd_ = 1.1* M_PI; // not freeze, but failed to pass criteria
+  std_yawdd_ = 0.15;
 
   // Laser measurement noise standard deviation position1 in m
   std_laspx_ = 0.15;
@@ -83,7 +89,16 @@ UKF::UKF() {
   // NIS for laser
   NIS_laser_ = 0.0;
 
-  cout << "Finished initializes Unscented Kalman filter!" << endl;
+  // Measurement noise covariance matrices initialization
+  R_radar_ = MatrixXd(3, 3);
+  R_radar_ << std_radr_*std_radr_, 0, 0,
+              0, std_radphi_*std_radphi_, 0,
+              0, 0,std_radrd_*std_radrd_;
+  R_lidar_ = MatrixXd(2, 2);
+  R_lidar_ << std_laspx_*std_laspx_,0,
+              0,std_laspy_*std_laspy_;
+
+  //cout << "Finished initializes Unscented Kalman filter!" << endl;
 }
 
 UKF::~UKF() {}
@@ -381,6 +396,16 @@ void UKF::UpdateUKF(MeasurementPackage meas_package, MatrixXd Zsig, int n_z) {
     S = S + weights_(i) * z_diff * z_diff.transpose();
   }
 
+   // Add measurement noise covariance matrix
+  MatrixXd R = MatrixXd(n_z, n_z);
+  if (meas_package.sensor_type_ == MeasurementPackage::RADAR){ // Radar
+    R = R_radar_;
+  }
+  else if (meas_package.sensor_type_ == MeasurementPackage::LASER){ // Lidar
+    R = R_lidar_;
+  }
+  S = S + R;
+  
   // Create matrix for cross correlation Tc
   MatrixXd Tc = MatrixXd(n_x_, n_z);
 
